@@ -19,26 +19,6 @@ app.listen(2000, function() {
     console.log("chodze na 2000");
 });
 
-app.get('/dupa', (req, res) => {
-    res.send("dupa");
-})
-
-
-app.get('/user/login/:login/:password', function(req, res) {
-    var login = req.params.login;
-    var password = req.params.password;
-
-    const requestUser = {
-        login: login,
-        password: password
-    };
-
-    var findUser = db.find(requestUser, function(err, responseUser) {
-        if (err) throw err;
-        res.send(responseUser[0]);
-    });
-});
-
 app.get('/students', function(req, res) {
     var query = "MATCH (u:Student) RETURN u";
     db.query(query, function(err, student) {
@@ -98,36 +78,54 @@ app.post('/student', function(req, res) {
 });
 
 
-app.put('/user/:id', function(req, res) {
-    var id = req.params.id;
-    var name = req.body.name;
-    var login = req.body.login;
-    var password = req.body.password;
+app.put('/student/:album', function(req, res) {
+    var album = req.params.album;
 
-    db.read(id, function(err, user) {
-        if (login && login != user.login) {
-            user.login = login;
-        }
-        if (password && password != user.password) {
-            user.password = password;
-        }
-        if (name && name != user.name) {
-            user.name = name;
-        }
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var note = req.body.note;
 
-        db.save(node, function(err, user) {
-            res.send(user);
+    var query = [
+        "MATCH (u:Student) WHERE u.album=" + album + "",
+        "RETURN u"
+    ].join(' ');
+
+    db.query(query, function(err, students) {
+        var student = students[0];
+        if (firstname && firstname != student.firstname) {
+            student.firstname = firstname;
+        }
+        if (lastname && lastname != student.lastname) {
+            student.lastname = lastname;
+        }
+        if (note && note != student.note) {
+            student.note = note;
+        }
+        console.log(student);
+        db.save(student, function(err, student) {
+            res.send(student);
         });
     });
 });
 
 
-app.delete('/user/:id', function(req, res) {
-    var id = req.params.id;
+app.delete('/student/:album', function(req, res) {
+    var album = req.params.album;
 
-    db.delete(id, [true], function(err, user) {
-        res.send(user);
+
+    var query = [
+        "MATCH (u) WHERE u.album=" + album + "",
+        "DELETE u"
+    ].join(' ');
+    db.query(query, function(err, student) {
+        res.send(student);
     });
+
+    // db.query(query);
+
+    // db.delete(album, [true], function(err, student) {
+    //     res.send(student);
+    // });
 });
 
 /////////////////////
