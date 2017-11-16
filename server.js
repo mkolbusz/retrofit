@@ -20,12 +20,29 @@ app.listen(2000, function() {
 });
 
 app.get('/students', function(req, res) {
+    var query;
+    if (req.query.sort) {
+        query = "MATCH (u:Student) RETURN u ORDER BY u.lastname " + req.query.sort;
+    } else {
+        query = "MATCH (u:Student) RETURN u";
+    }
+    db.query(query, function(err, student) {
+        if (err) throw err;
+        res.send(student);
+    });
+});
+
+app.get('/students', function(req, res) {
+    console.log("zwykly get");
+
     var query = "MATCH (u:Student) RETURN u";
     db.query(query, function(err, student) {
         if (err) throw err;
         res.send(student);
     });
 });
+
+
 
 app.get('/user/create/:name/:login/:password', function(req, res) {
     var name = req.params.name;
