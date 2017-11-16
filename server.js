@@ -39,11 +39,11 @@ app.get('/user/login/:login/:password', function(req, res) {
     });
 });
 
-app.get('/users', function(req, res) {
-    var query = "MATCH (u) RETURN u";
-    db.query(query, function(err, users) {
+app.get('/students', function(req, res) {
+    var query = "MATCH (u:Student) RETURN u";
+    db.query(query, function(err, student) {
         if (err) throw err;
-        res.send(users);
+        res.send(student);
     });
 });
 
