@@ -16,7 +16,7 @@ app.all('*', function(req, res, next) {
     next();
 });
 app.listen(2000, function() {
-    console.log("chodze na 2000");
+    console.log("Serwer uruchomiony na localhost:2000");
 });
 
 app.get('/students', function(req, res) {
@@ -29,7 +29,9 @@ app.get('/students', function(req, res) {
     db.query(query, function(err, student) {
         if (err) throw err;
         res.send(student);
+        console.log("Students list sorted and fetched");
     });
+    
 });
 
 app.get('/students', function(req, res) {
@@ -39,6 +41,7 @@ app.get('/students', function(req, res) {
     db.query(query, function(err, student) {
         if (err) throw err;
         res.send(student);
+        console.log("Students list fetched");
     });
 });
 
@@ -74,6 +77,7 @@ app.get('/student/:album', function(req, res) {
     ].join(' ');
     db.query(query, function(err, student) {
         res.send(student);
+        console.log("Student " + album + " fetched");
     });
 });
 
@@ -91,6 +95,7 @@ app.post('/student', function(req, res) {
         note: note
     }, 'Student', function(err, student) {
         res.send(student);
+        console.log("Student " + album + " added");
     });
 });
 
@@ -121,6 +126,7 @@ app.put('/student/:album', function(req, res) {
         console.log(student);
         db.save(student, function(err, student) {
             res.send(student);
+            console.log("Student " + album + " updated");
         });
     });
 });
@@ -129,15 +135,15 @@ app.put('/student/:album', function(req, res) {
 app.delete('/student/:album', function(req, res) {
     var album = req.params.album;
 
-
     var query = [
         "MATCH (u) WHERE u.album=" + album + "",
         "DELETE u"
     ].join(' ');
     db.query(query, function(err, student) {
         res.send(student);
+        console.log("Student " + album + " deleted");
     });
-
+    
     // db.query(query);
 
     // db.delete(album, [true], function(err, student) {
