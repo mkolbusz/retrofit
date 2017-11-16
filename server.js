@@ -29,13 +29,13 @@ app.get('/user/login/:login/:password', function(req, res) {
     var password = req.params.password;
 
     const requestUser = {
-      login: login,
-      password: password
+        login: login,
+        password: password
     };
 
-    var findUser = db.find(requestUser, function(err, responseUser){
-      if (err) throw err;
-      res.send(responseUser[0]);
+    var findUser = db.find(requestUser, function(err, responseUser) {
+        if (err) throw err;
+        res.send(responseUser[0]);
     });
 });
 
@@ -48,13 +48,13 @@ app.get('/users', function(req, res) {
 });
 
 app.get('/user/create/:name/:login/:password', function(req, res) {
-  var name = req.params.name;
+    var name = req.params.name;
     var login = req.params.login;
     var password = req.params.password;
 
     const requestUser = {
-      login: login,
-      password: password
+        login: login,
+        password: password
     };
 
     db.save({
@@ -68,26 +68,32 @@ app.get('/user/create/:name/:login/:password', function(req, res) {
 });
 
 
-app.get('/user/:id', function(req, res) {
-    var id = req.params.id;
+app.get('/student/:album', function(req, res) {
+    var album = req.params.album;
 
-    db.read(id, function(err, user) {
-        res.send(user);
+    var query = [
+        "MATCH (u) WHERE u.album=" + album + "",
+        "RETURN u"
+    ].join(' ');
+    db.query(query, function(err, student) {
+        res.send(student);
     });
 });
 
 
-app.post('/user', function(req, res) {
-    var name = req.body.name;
-    var login = req.body.login;
-    var password = req.body.password;
+app.post('/student', function(req, res) {
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var album = req.body.album;
+    var note = req.body.note;
 
     db.save({
-        name: name,
-        login: login,
-        password: password
-    }, 'User', function(err, user) {
-        res.send(user);
+        firstname: firstname,
+        lastname: lastname,
+        album: album,
+        note: note
+    }, 'Student', function(err, student) {
+        res.send(student);
     });
 });
 
@@ -146,7 +152,7 @@ app.get('/vectors/:ownerId', function(req, res) {
     db.query(query, function(err, vectors) {
         if (err) throw err;
         vectors.forEach(vector => {
-          vector.values = JSON.parse("[" + vector.values + "]");
+            vector.values = JSON.parse("[" + vector.values + "]");
         })
         res.send(vectors);
     });
@@ -276,25 +282,25 @@ app.get('/matrices/:ownerId', function(req, res) {
     db.query(query, function(err, matrices) {
         if (err) throw err;
         matrices.forEach(matrix => {
-          matrix.values = oneDimToTwo(matrix.values, matrix.dimension2);
+            matrix.values = oneDimToTwo(matrix.values, matrix.dimension2);
         });
         res.send(matrices);
     });
 });
 
-function oneDimToTwo(array, dim2){
-  console.log(dim2);
-  console.log(array.length);
-  array = JSON.parse("[" + array + "]")
-  var matrix = [];
-  var i, j, temp;
-  for(i=0, j=array.length; i<j; i+=dim2){
-    temp = array.slice(i, i+dim2);
-    console.log(temp);
-    matrix.push(temp);
-  }
-  console.log(matrix);
-  return matrix;
+function oneDimToTwo(array, dim2) {
+    console.log(dim2);
+    console.log(array.length);
+    array = JSON.parse("[" + array + "]")
+    var matrix = [];
+    var i, j, temp;
+    for (i = 0, j = array.length; i < j; i += dim2) {
+        temp = array.slice(i, i + dim2);
+        console.log(temp);
+        matrix.push(temp);
+    }
+    console.log(matrix);
+    return matrix;
 }
 
 app.post('/matrix', function(req, res) {
@@ -422,9 +428,8 @@ app.put('/vectors/:userId', function(req, res) {
         "MATCH (u) -[r:HAS_V]-> (m) " +
         "DELETE r, m " +
         "RETURN u";
-        var params = {
-        };
-        params.id = idk;
+    var params = {};
+    params.id = idk;
     // USUN STARE MACIERZE
     db.query(cypher, {
         "id": Number(idk)
