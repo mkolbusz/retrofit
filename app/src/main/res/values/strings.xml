@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Retrofit</string>
+    <string name="app_name">Dodawanie studenta</string>
+    <string name="title_activity_students_list">Lista studentów</string>
 </resources>
